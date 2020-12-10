@@ -8,11 +8,11 @@ use Stripe\PaymentIntent;
 
 class StripeConnectAdapter{
     // private Stripe $stripe;
-    private Account $account;
+    private $account;
 
     public function __construct($apiKey = null, $accountConfig = null){
-        Stripe::setApiKey($apiKey ?? config('app.stripe_key'));
-        $this->account = Account::create($accountConfig ?? [
+        Stripe::setApiKey((config('app.stripe_key')) ? config('app.stripe_key') : $apiKey);
+        $this->account = Account::create(($accountConfig) ? $accountConfig : [
             'country' => 'US',
             'type' => 'express'
         ]);
@@ -31,7 +31,7 @@ class StripeConnectAdapter{
         return PaymentIntent::create([
             'payment_method_types' => ['card'],
             'amount' => $amount,
-            'currency' => $currency ?? 'usd',
+            'currency' => $currency ? $currency : 'usd',
             'transfer_data' => [
                 'destination' => $accountID
             ]
